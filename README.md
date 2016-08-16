@@ -2,7 +2,6 @@
 
 ## I want to
 - Convert multiple different XML schemas into my standard schema.
--
 
 ## Resources
 - [RubyConf 2014 - Rapidly Mapping JSON/XML API Schemas in Ruby by Adam Cuppy](
@@ -14,3 +13,6 @@ https://www.youtube.com/watch?v=1K0Pt0o9F7w)
 - [RubyでXMLに対応したクラスを扱うときのベストプラクティス - QA@IT](http://qa.atmarkit.co.jp/q/3447)
 - [Converting large XML documents to Ruby Hashes | Devnull](http://devnull.absolventa.de/2014/03/18/converting-large-xml-documents-to-ruby-hashes/)
 - [Oga](https://github.com/YorickPeterse/oga)
+- [Nokogiri](https://github.com/sparklemotion/nokogiri)
+- [Parsing an XML file with Nokogiri to determine the path (Ruby)](http://stackoverflow.com/a/15692699/3837223)
+- [Active Model XML Serializer](http://edgeapi.rubyonrails.org/classes/ActiveModel/Serializers/Xml.html)
