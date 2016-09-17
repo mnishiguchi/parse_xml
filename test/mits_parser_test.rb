@@ -1,11 +1,13 @@
-require "active_support/all"
-require "awesome_print"
-require 'open-uri'
+require 'awesome_print'
 require 'pry'
 require 'test_helper'
+require 'support/active_support'
 require 'support/webmock'
 
 require_relative "../lib/mits_parser.rb"
+
+# The path to the 'fixture/files' directory
+FILE_DIR = "#{Dir.pwd}/test/fixtures/files"
 
 describe MitsParser do
 
@@ -19,61 +21,54 @@ describe MitsParser do
   end
 
   before do
-
-    # Check currently working directory.
-    puts "Dir.pwd: #{Dir.pwd}"
+    # The absolute path to the source XML file.
+    path = File.join(FILE_DIR, "boz.xml")
 
     # Read an example xml data.
-    xml = open("#{Dir.pwd}/test/fixtures/files/bozzuto.xml") { |io| io.read }
+    xml = File.read(path)
 
-    ap xml
-    #
-    # @property_hash = "TODO"
 
+    @property_hash = Hash.from_xml(xml)
+
+    # ap @property_hash
 
   end
 
-  it "example test" do
 
-    # binding.pry
+  describe ".dig(hash, paths)" do
 
-    puts "end of the example test"
+    describe "when first argument is nil" do
+      subject { MitsParser.dig(nil, ["Property"]) }
+
+      it "returns {}" do
+        assert_equal({}, subject)
+      end
+    end
+
+    describe "when first argument is non-hash type" do
+      subject { MitsParser.dig("hello", ["Property"]) }
+
+      it "returns []" do
+        assert_equal([], subject)
+      end
+    end
+
+    describe "when the path array is empty" do
+      subject { MitsParser.dig(@property_hash, []) }
+
+      it "returns the same hash that was passed in" do
+        assert_equal(@property_hash, subject)
+      end
+    end
+
+    describe "when the path is non-array" do
+      subject { MitsParser.dig(@property_hash, "non-array object") }
+
+      it "raises an exception" do
+        assert_raises(Exception)
+      end
+    end
   end
-
-  # describe ".dig(hash, paths)" do
-  #
-  #   describe "when first argument is nil" do
-  #     subject { MitsParser.dig(nil, ["Property"]) }
-  #
-  #     it "returns {}" do
-  #       assert_equal({}, subject)
-  #     end
-  #   end
-  #
-  #   describe "when first argument is non-hash type" do
-  #     subject { MitsParser.dig("hello", ["Property"]) }
-  #
-  #     it "returns []" do
-  #       assert_equal([], subject)
-  #     end
-  #   end
-  #
-  #   describe "when the path array is empty" do
-  #     subject { MitsParser.dig(@property_hash, []) }
-  #
-  #     it "returns the same hash that was passed in" do
-  #       assert_equal(@property_hash, subject)
-  #     end
-  #   end
-  #
-  #   describe "when the path is non-array" do
-  #     subject { MitsParser.dig(@property_hash, "non-array object") }
-  #
-  #     it "raises an exception" do
-  #       assert_raises(Exception)
-  #     end
-  #   end
-  # end
 
   #########
 

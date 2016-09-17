@@ -10,14 +10,32 @@ end
 # Check currently working directory.
 puts "Dir.pwd:  #{Dir.pwd}"
 
-# absolute path to the source XML file.
-filename = "#{Dir.pwd}/test/fixtures/files/ash_a.xml"
-puts "filename: #{filename}"
+# The path to the 'files' directory
+FILE_DIR = "#{Dir.pwd}/test/fixtures/files"
+
+# The absolute path to the source XML file.
+path = File.join(FILE_DIR, "maa.xml")
+puts "path: #{path}"
 
 # Read that file.
-xml = File.read(filename)
+xml = File.read(path)
 
 # Convert xml to hash using ActiveSupport::XMLConverter
 hash = Hash.from_xml(xml)
+# ap hash
 
-ap hash
+# Extract desired info from the resulting hash.
+info_hash = hash["PhysicalProperty"]["Property"][0]["File"].first
+
+
+ap info_hash.keys
+
+
+# # Convert the info to JSON
+# info_json = info_hash.to_json
+#
+# # Write the info to a new file.
+# # destination = "tmp.json"
+# # destination = "maa_property_0_file_0.json"
+# path = File.join(FILE_DIR, destination)
+# File.write(path, info_json)
