@@ -3,38 +3,23 @@ require "awesome_print"
 require "json"
 require "hashie"
 
-require_relative "./mits_field.rb"
-
 =begin
 A feed parser that is used for parsing a feed xml into mits format.
 It is used in Mits class.
-
+---
 Usage:
-  MitsParser.parse_properties(json_hash).each do |property_hash|
-    floorplan_hashes = property_hash.delete(:floorplans).reject { |value| value == {} }
-    # ...
-  end
-
-
+  MitsParser.new(@property_data).find_all_properties
+  #=> array of properties
+---
 Input:
   - feed hash (NOTE: It must not include the root node, namely "PhysicalProperty")
-Process:
-  - Sanitize special fields.
 Output:
   - Sanitized feed hash that can be available in the specified information.
-
-
-My plan for restructuring:
-  Invokation
-    mits = MitsParser.new(data)         #==> Create a parser for a given feed
-                                        #==> Sanitized feed for mits
-    mits.properties                     #==> An array of property hashes
-
-  Methodology
-    MitsParser internally
-      1. Divide the properties into objects
-      2. Sanitize data
-      3. Reconstruct as json
+---
+Purposes:
+  1. Divide the properties into objects
+  2. Sanitize data
+  3. Reconstruct as json
 =end
 
 class MitsParser
@@ -137,85 +122,56 @@ class MitsParser
 
 
   # ===
-  # Find data for each field
+  # Find all the properties from @data.
   # ===
 
 
-  def self.find_address(data)
+  def find_all_properties
     results = []
 
     search_keys = [
-      "Address",
-      "address"
+      "Property"
     ]
 
     search_keys.each do |key|
-      results << MitsParser.deep_find_all_by_key(data, key)
+      results << MitsParser.deep_find_all_by_key(@data, key)
     end
 
     results = results.flatten.uniq
   end
 
 
-
-
-
   # ===
-  # Property
   # ===
 
 
+  # Represents a single property.
+  # Finds data for each field.
+  # ---
   # Usage:
-  #   MitsParser::Property.new(data)
+  #   MitsParser::Property.new(properties.first).address
   class Property
-    attr_reader(
-      :address,
-      :amenities,
-      :descriptions,
-      :emails,
-      :feed_uid,
-      :floorplans,
-      :information,
-      :names,
-      :latitude,
-      :lease_length,
-      :longitude,
-      :office_hours,
-      :parking,
-      :phones,
-      :photo_urls,
-      :pet_policy,
-      :promotional_info,
-      :urls,
-      :utilities
-    )
 
-    def initialize(data)
-      # Ensure args are of proper data types.
-      unless data.is_a?(Array) || data.is_a?(Hash)
-        raise ArgumentError.new("data must be an array or hash")
+    def initialize(property_data)
+      @property = property_data
+    end
+
+    # data - data of a SINGLE property
+    # returns an address that was found first.
+    def address
+      results = []
+
+      search_keys = [
+        "Address",
+        "address"
+      ]
+
+      search_keys.each do |key|
+        results << MitsParser.deep_find_all_by_key(@property, key)
       end
 
-      @address          = MitsField::Address.new(data).value
-      # @amenities        = MitsField::Amenities.new(data).value
-      # @descriptions     = MitsField::Descriptions.new(data).value
-      # @emails           = MitsField::Emails.new(data).value
-      # @feed_uid         = MitsField::FeedUid.new(data).value
-      # @floorplans       = MitsField::Floorplans.new(data).value
-      # @information      = MitsField::Information.new(data).value
-      # @names            = MitsField::Names.new(data).value
-      # @latitude         = MitsField::Latitude.new(data).value
-      # @lease_length     = MitsField::LeaseLength.new(data).value
-      # @longitude        = MitsField::Longitude.new(data).value
-      # @office_hours     = MitsField::OfficeHours.new(data).value
-      # @parking          = MitsField::Parking.new(data).value
-      # @phones           = MitsField::Phones.new(data).value
-      # @photos           = MitsField::Photos.new(data).value
-      # @pet_policy       = MitsField::PetPolicy.new(data).value
-      # @promotions       = MitsField::Promotions.new(data).value
-      # @urls             = MitsField::Urls.new(data).value
-      # @utilities        = MitsField::Utilities.new(data).value
-      freeze
+      results = results.flatten.uniq
+      results.first
     end
   end
 end

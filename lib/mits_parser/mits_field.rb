@@ -5,16 +5,27 @@ takes a feed data. We create subclasses of the Base class that
 correspond to the Property model's column names and specify how
 to determine the value for each field.
 Usage:
-  address = MitsField::Address.new(data).value
+  address = MitsField::Address.new(data)
 =end
 
 module MitsField
 
   class Base
-    attr_reader :value
-
     def initialize(data)
       raise "Must be array or hash" unless data.is_a?(Array) || data.is_a?(Hash)
+      @data = data
+    end
+
+    # Applies to @data the specified filters to format the data.
+    # *filters - unlimited args of filter lambdas.
+    # Usage:
+    #   fix!(
+    #     ->(k, v) { /n\/a/i =~ v ? [k, ""] : [k, v] },
+    #     ->(k, v) { /address/i =~ k ? ["Address", v] : [k, v] },
+    #   )
+    def fix!(*filters)
+      filters.each { |filter| @data = @data.map(&filter) }
+      @data = Hash[@data]
     end
   end
 
@@ -26,14 +37,27 @@ module MitsField
 
   class Address < MitsField::Base
     def initialize(data)
-      super
-      @address = data["address"]
-      format_empty_values!
-      @value = @address.to_json
-    end
+      super(data)
 
-    def format_empty_values!
-      # @address = @address.map { |k, v| (/n\/a/i =~ v) ? [k, ""] : [k, v] }.to_h
+      # Replaces "N/A" with "".
+      # Standardizes on the "Address" key for the street address.
+      # Standardizes on the "County" key for the county.
+      # Standardizes on the "Zip" key for the zipcode.
+      fix!(
+        ->(k, v) { /n\/a/i =~ v ? [k, ""] : [k, v] },
+        ->(k, v) { /address/i =~ k ? ["Address", v] : [k, v] },
+        ->(k, v) { /county/i =~ k ? ["County", v] : [k, v] },
+        ->(k, v) { /zip/i =~ k || /postal/i =~ k ? ["Zip", v] : [k, v] },
+      )
+
+      # Determine a value for each key.
+      @address  = @data["Address"]
+      @city     = @data["City"]
+      @county   = @data["County"]
+      @zip      = @data["Zip"]
+      @state    = @data["State"]
+      @country  = @data["Country"]
+      @po_box   = @data["PO_Box"]
     end
   end
 

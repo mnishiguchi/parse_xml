@@ -1,24 +1,6 @@
-require 'awesome_print'
-require 'pry'
-require 'test_helper'
-require 'support/active_support'
-require 'support/webmock'
-
 require_relative "../lib/mits_parser/mits_parser.rb"
 
-# The path to the 'fixture/files' directory
-FILE_DIR = "#{Dir.pwd}/test/fixtures/files"
-
 describe MitsParser do
-
-  def valid_json?(json)
-    begin
-      JSON.parse(json)
-      return true
-    rescue Exception => e
-      return false
-    end
-  end
 
   before do
     # The absolute path to the source XML file.
@@ -158,30 +140,17 @@ describe MitsParser do
   # ===
 
 
-  describe ".find_address" do
-    subject { MitsParser.find_address(@property_data) }
+  describe "Property#address" do
+
+    let(:properties) { MitsParser.new(@property_data).find_all_properties }
+    let(:address) { MitsParser::Property.new(properties.first).address }
 
     it "returns an array of address info" do
-      assert subject.is_a?(Array)
-      assert /city/i =~ subject.to_s
-      assert /state/i =~ subject.to_s
+      assert /city/i  =~ address.to_s
+      assert /state/i =~ address.to_s
     end
   end
 
 
-  # ===
-  # ===
 
-
-  describe "Property" do
-    subject { MitsParser::Property.new(@property_data) }
-
-    it "is a MitsParser::Property" do
-      assert subject.is_a?(MitsParser::Property)
-    end
-
-    it "#address" do
-      assert subject.respond_to?(:address)
-    end
-  end
 end
