@@ -13,7 +13,9 @@ class Mits
   # to database. Returns true if the import and save are successful,
   # false if the import is unsuccessful.
   def import_xml
+    # ...
     convert_feed_to_feed_models
+    # ...
   end
 
   def convert_feed_to_feed_models
