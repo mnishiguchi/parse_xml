@@ -1,67 +1,15 @@
 =begin
-A feed parser that is used for parsing a feed xml into mits format.
-It is used in Mits class.
+TODO:
+Clean up each field of a parsed Mits feed.
+Used after a feed was processed by MitsParser.
 =end
 
-class MitsParser
-  def self.dig_any(hash, default_value, *set_of_paths)
-    set_of_paths.each do |paths|
-      result = MitsParser.dig(hash, paths)
-      result = result.compact.flatten if result.is_a?(Array)
-      next if result.blank?
-      return result
-    end
-    default_value
+module MitsParserSanitizer
+
+  class Base
   end
 
-  def self.dig_all(hash, *set_of_paths)
-    {}.tap do |results|
-      set_of_paths.each do |paths|
-        result = MitsParser.dig(hash, paths)
-        result = result.compact.flatten if result.is_a?(Array)
-        next if result.blank?
-        results[paths.join.underscore.to_sym] = result
-      end
-    end
-  end
-
-  # source - source data of any data type, typically hash, array, string
-  # paths  - always an array of strings
-  # returns value if any. Datatypes: Array, String, Hash.
-  # e.g., [], {}, "some value", { key: value, key: value }
-  def self.dig(source, paths)
-    raise ArgumentError.new("paths must be an array") unless paths.is_a? Array
-
-    # Base cases:
-    return source if paths.empty?
-    return {} unless source
-
-    # Pop a path from the paths list.
-    path            = paths.first
-    remaining_paths = paths[1...paths.size]
-
-    # "Array" is a special word we use to specify a node is an array.
-    if path == "Array"
-      # Apply this method to all the elements in the array.
-      source.map do |h|
-        MitsParser.dig(h, remaining_paths)
-      end
-    elsif source.is_a?(Hash) && (new_source = source[path])
-      # If source is a hash, repeat recursively.
-      MitsParser.dig(new_source, remaining_paths)
-    else
-      []
-    end
-  end
-
-  # Try freaking everything...ensures we pick up some weird keys in Floorplan
-  def self.brute_force_keys(key)
-    [key.singularize, key.pluralize].map do |r|
-      [r.titleize, r.camelize, r.underscore, r.tableize, r.humanize]
-    end.flatten.uniq
-  end
-
-  class Amenities
+  class Amenities < MitsParserSanitizer::base
     TRANSFORM_KEYS = {
       "Availability24Hours" => "AlwaysAvailable",
       "Available24Hours"    => "AlwaysAvailable",
@@ -109,7 +57,7 @@ class MitsParser
     end
   end
 
-  class Utility
+  class Utility < MitsParserSanitizer::base
     TRANSFORM_KEYS = {
       "AirCon" => "AirConditioning"
     }
@@ -150,7 +98,7 @@ class MitsParser
     end
   end
 
-  class Address
+  class Address < MitsParserSanitizer::base
     def self.parse(hash)
       fix({
             address: MitsParser.dig_any(hash, "", %w(Identification Address Address1), %w(Identification Address ShippingAddress), %w(Identification Address MailingAddress), %w(PropertyID Address Address), %w(PropertyID Address Address1)),
@@ -183,7 +131,7 @@ class MitsParser
     end
   end
 
-  class Photo
+  class Photo < MitsParserSanitizer::base
     def self.parse(hash)
       photo_hashes = MitsParser.dig(hash, %w(File Array)).compact.select { |file| file.is_a?(Hash) && (file.key?("FileType") || file.key?("Format")) }
       photo_hashes = photo_hashes.map do |photo_hash|
@@ -255,7 +203,7 @@ class MitsParser
     end
   end
 
-  class Parking
+  class Parking < MitsParserSanitizer::base
     def self.parse(hash)
       parking_hash = MitsParser.dig(hash, %w(Information Parking))
       return {} unless parking_hash
@@ -290,7 +238,7 @@ class MitsParser
     end
   end
 
-  class OfficeHours
+  class OfficeHours < MitsParserSanitizer::base
 
     def self.parse_date(string_time)
       return string_time if ["Closed", "By Appointment Only"].include?(string_time)
@@ -332,7 +280,7 @@ class MitsParser
 
   end
 
-  class PetPolicy
+  class PetPolicy < MitsParserSanitizer::base
     TRANSFORM_KEYS = {
       "Availability24Hours" => "AlwaysAvailable",
       "Available24Hours"    => "AlwaysAvailable",
@@ -381,7 +329,7 @@ class MitsParser
     end
   end
 
-  class Floorplan
+  class Floorplan < MitsParserSanitizer::base
 
     def self.parse(hash, floorplan_photos)
       hashes = MitsParser.dig(hash, %w(Floorplan Array))
@@ -511,7 +459,7 @@ class MitsParser
   end
 
 
-  class PropertyParser
+  class PropertyParser < MitsParserSanitizer::base
     def self.parse(hash)
       photos = Photo.parse(hash)
       latitude  = MitsParser.dig_any(hash, "0", %w(Identification Latitude),  %w(ILS_Identification Latitude),  %w(PropertyID Identification Latitude)).to_f

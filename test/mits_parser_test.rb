@@ -4,7 +4,7 @@ require 'test_helper'
 require 'support/active_support'
 require 'support/webmock'
 
-require_relative "../lib/mits_parser.rb"
+require_relative "../lib/mits_parser/mits_parser.rb"
 
 # The path to the 'fixture/files' directory
 FILE_DIR = "#{Dir.pwd}/test/fixtures/files"
