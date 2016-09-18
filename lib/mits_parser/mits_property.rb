@@ -1,4 +1,4 @@
-require_relative "./mits_field.rb"
+require_relative "./mits_formatter.rb"
 
 =begin
 MitsProperty represents our formated property data.
@@ -36,25 +36,25 @@ class MitsProperty
 
     @property = property_data
 
-    @address          = MitsField::Address.new(@property.address)
-    # @amenities        = MitsField::Amenities.new(@parser.todo)
-    # @descriptions     = MitsField::Descriptions.new(@parser.todo)
-    # @emails           = MitsField::Emails.new(@parser.todo)
-    # @feed_uid         = MitsField::FeedUid.new(@parser.todo)
-    # @floorplans       = MitsField::Floorplans.new(@parser.todo)
-    # @information      = MitsField::Information.new(@parser.todo)
-    # @names            = MitsField::Names.new(@parser.todo)
-    # @latitude         = MitsField::Latitude.new(@parser.todo)
-    # @lease_length     = MitsField::LeaseLength.new(@parser.todo)
-    # @longitude        = MitsField::Longitude.new(@parser.todo)
-    # @office_hours     = MitsField::OfficeHours.new(@parser.todo)
-    # @parking          = MitsField::Parking.new(@parser.todo)
-    # @phones           = MitsField::Phones.new(@parser.todo)
-    # @photos           = MitsField::Photos.new(@parser.todo)
-    # @pet_policy       = MitsField::PetPolicy.new(@parser.todo)
-    # @promotions       = MitsField::Promotions.new(@parser.todo)
-    # @urls             = MitsField::Urls.new(@parser.todo)
-    # @utilities        = MitsField::Utilities.new(@parser.todo)
+    @address          = MitsFormatter::Address.new(@property.address)
+    # @amenities        = MitsFormatter::Amenities.new(@parser.todo)
+    # @descriptions     = MitsFormatter::Descriptions.new(@parser.todo)
+    # @emails           = MitsFormatter::Emails.new(@parser.todo)
+    # @feed_uid         = MitsFormatter::FeedUid.new(@parser.todo)
+    # @floorplans       = MitsFormatter::Floorplans.new(@parser.todo)
+    # @information      = MitsFormatter::Information.new(@parser.todo)
+    # @names            = MitsFormatter::Names.new(@parser.todo)
+    # @latitude         = MitsFormatter::Latitude.new(@parser.todo)
+    # @lease_length     = MitsFormatter::LeaseLength.new(@parser.todo)
+    # @longitude        = MitsFormatter::Longitude.new(@parser.todo)
+    # @office_hours     = MitsFormatter::OfficeHours.new(@parser.todo)
+    # @parking          = MitsFormatter::Parking.new(@parser.todo)
+    # @phones           = MitsFormatter::Phones.new(@parser.todo)
+    # @photos           = MitsFormatter::Photos.new(@parser.todo)
+    # @pet_policy       = MitsFormatter::PetPolicy.new(@parser.todo)
+    # @promotions       = MitsFormatter::Promotions.new(@parser.todo)
+    # @urls             = MitsFormatter::Urls.new(@parser.todo)
+    # @utilities        = MitsFormatter::Utilities.new(@parser.todo)
     freeze
   end
 end

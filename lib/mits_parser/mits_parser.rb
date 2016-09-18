@@ -130,7 +130,8 @@ class MitsParser
     results = []
 
     search_keys = [
-      "Property"
+      "Property",
+      "property"
     ]
 
     search_keys.each do |key|
