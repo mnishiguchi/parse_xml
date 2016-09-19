@@ -2,7 +2,8 @@ require_relative "./mits_formatter.rb"
 
 =begin
 MitsProperty represents our formated property data.
-It can be converted into JSON or XML.
+It is a wrapper of all the formatted attributes, which can be passed in to
+the corresponding ActiveRecord model.
 =end
 class MitsProperty
   attr_reader(
@@ -36,25 +37,27 @@ class MitsProperty
 
     @property = property_data
 
-    @address          = MitsFormatter::Address.new(@property.address)
-    # @amenities        = MitsFormatter::Amenities.new(@parser.todo)
-    # @descriptions     = MitsFormatter::Descriptions.new(@parser.todo)
-    # @emails           = MitsFormatter::Emails.new(@parser.todo)
-    # @feed_uid         = MitsFormatter::FeedUid.new(@parser.todo)
-    # @floorplans       = MitsFormatter::Floorplans.new(@parser.todo)
-    # @information      = MitsFormatter::Information.new(@parser.todo)
-    # @names            = MitsFormatter::Names.new(@parser.todo)
-    # @latitude         = MitsFormatter::Latitude.new(@parser.todo)
-    # @lease_length     = MitsFormatter::LeaseLength.new(@parser.todo)
-    # @longitude        = MitsFormatter::Longitude.new(@parser.todo)
-    # @office_hours     = MitsFormatter::OfficeHours.new(@parser.todo)
-    # @parking          = MitsFormatter::Parking.new(@parser.todo)
-    # @phones           = MitsFormatter::Phones.new(@parser.todo)
-    # @photos           = MitsFormatter::Photos.new(@parser.todo)
-    # @pet_policy       = MitsFormatter::PetPolicy.new(@parser.todo)
-    # @promotions       = MitsFormatter::Promotions.new(@parser.todo)
-    # @urls             = MitsFormatter::Urls.new(@parser.todo)
-    # @utilities        = MitsFormatter::Utilities.new(@parser.todo)
+    # ap @property.amenities
+
+    @address      = MitsFormatter::Address.new(@property.address)
+    @amenities    = MitsFormatter::Amenities.new(@property.amenities)
+    # @descriptions = MitsFormatter::Descriptions.new(@property.descriptions)
+    # @emails       = MitsFormatter::Emails.new(@property.emails)
+    # @feed_uid     = MitsFormatter::FeedUid.new(@property.feed_uid)
+    # @floorplans   = MitsFormatter::Floorplans.new(@property.floorplans)
+    # @information  = MitsFormatter::Information.new(@property.information)
+    # @names        = MitsFormatter::Names.new(@property.names)
+    # @latitude     = MitsFormatter::Latitude.new(@property.latitude)
+    # @lease_length = MitsFormatter::LeaseLength.new(@property.lease_length)
+    # @longitude    = MitsFormatter::Longitude.new(@property.longitude)
+    # @office_hours = MitsFormatter::OfficeHours.new(@property.office_hours)
+    # @parking      = MitsFormatter::Parking.new(@property.parking)
+    # @phones       = MitsFormatter::Phones.new(@property.phones)
+    # @photos       = MitsFormatter::Photos.new(@property.photos)
+    # @pet_policy   = MitsFormatter::PetPolicy.new(@property.pet_policy)
+    # @promotions   = MitsFormatter::Promotions.new(@property.promotions)
+    # @urls         = MitsFormatter::Urls.new(@property.urls)
+    # @utilities    = MitsFormatter::Utilities.new(@property.utilities)
     freeze
   end
 end

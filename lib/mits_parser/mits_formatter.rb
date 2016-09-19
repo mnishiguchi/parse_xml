@@ -19,13 +19,13 @@ module MitsFormatter
     end
 
     # Applies to @data the specified filters to format the data.
-    # *filters - unlimited args of filter lambdas.
+    # filters - unlimited args of filter lambdas.
     # Usage:
-    #   fix!(
+    #   format!(
     #     ->(k, v) { /n\/a/i =~ v ? [k, ""] : [k, v] },
     #     ->(k, v) { /address/i =~ k ? ["Address", v] : [k, v] },
     #   )
-    def fix!(*filters)
+    def format!(*filters)
       filters.each { |filter| @data = @data.map(&filter) }
       @data = Hash[@data]
     end
@@ -45,7 +45,7 @@ module MitsFormatter
       # Standardizes on the "Address" key for the street address.
       # Standardizes on the "County" key for the county.
       # Standardizes on the "Zip" key for the zipcode.
-      fix!(
+      format!(
         ->(k, v) { /n\/a/i =~ v ? [k, ""] : [k, v] },
         ->(k, v) { /address/i =~ k ? ["Address", v] : [k, v] },
         ->(k, v) { /county/i =~ k ? ["County", v] : [k, v] },
@@ -63,108 +63,129 @@ module MitsFormatter
     end
   end
 
-  # class Amenities < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["menities"].to_json
-  #   end
-  # end
-  #
-  # class Community < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["amenities"]["community"]
-  #   end
-  # end
-  #
-  # class Emails < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["emails"].values
-  #   end
-  # end
-  #
-  # class Description < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = "Lorem"
-  #   end
-  # end
-  #
-  # class Floorplans < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["floorplans"].to_json
-  #   end
-  # end
-  #
-  # class Latitude < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["latitude"]
-  #   end
-  # end
-  #
-  # class Longitude < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["longitude"]
-  #   end
-  # end
-  #
-  # class Parking < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["parking"]
-  #   end
-  # end
-  #
-  # class PetPolicy < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["pet_policy"].to_json
-  #   end
-  # end
-  #
-  # class Phones < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["phones"].to_json
-  #   end
-  # end
-  #
-  # class PrimaryName < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["primary_name"]
-  #   end
-  # end
-  #
-  # class Photos < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["photos"].to_json
-  #   end
-  # end
-  #
-  # class Uid < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["uniq_id"]
-  #   end
-  # end
-  #
-  # class Urls < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["urls"].to_json
-  #   end
-  # end
-  #
-  # class Utility < MitsFormatter::Base
-  #   def initialize(data)
-  #     super(data)
-  #     @value = data["utility"].to_json
-  #   end
-  # end
+  class Amenities < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["menities"].to_json
+    end
+  end
+
+  class Community < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["amenities"]["community"]
+    end
+  end
+
+  class Descriptions < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["descriptions"]
+    end
+  end
+
+  class Emails < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["emails"]
+    end
+  end
+
+  class Description < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = "Lorem"
+    end
+  end
+
+  class Floorplans < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["floorplans"].to_json
+    end
+  end
+
+  class Information < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["information"].to_json
+    end
+  end
+
+  class Latitude < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["latitude"]
+    end
+  end
+
+  class Longitude < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["longitude"]
+    end
+  end
+
+  class Names < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["names"]
+    end
+  end
+
+  class Parking < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["parking"]
+    end
+  end
+
+  class PetPolicy < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["pet_policy"].to_json
+    end
+  end
+
+  class Phones < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["phones"].to_json
+    end
+  end
+
+  class PrimaryName < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["primary_name"]
+    end
+  end
+
+  class Photos < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["photos"].to_json
+    end
+  end
+
+  class FeedUid < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["uniq_id"]
+    end
+  end
+
+  class Urls < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["urls"].to_json
+    end
+  end
+
+  class Utility < MitsFormatter::Base
+    def initialize(data)
+      super(data)
+      @value = data["utility"].to_json
+    end
+  end
 end

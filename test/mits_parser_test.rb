@@ -151,6 +151,18 @@ describe MitsParser do
     end
   end
 
+  describe "Property#amenitiees" do
+    # TODO
+
+    # let(:properties) { MitsParser.new(@property_data).find_all_properties }
+    # let(:address) { MitsParser::Property.new(properties.first).address }
+    #
+    # it "returns an array of address info" do
+    #   assert /city/i  =~ address.to_s
+    #   assert /state/i =~ address.to_s
+    # end
+  end
+
 
 
 end

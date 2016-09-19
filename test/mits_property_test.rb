@@ -42,6 +42,21 @@ describe MitsProperty do
   end
 
 
+  # TODO
+  describe "#amenities" do
+    # subject { MitsProperty.new(mits_parser_property).amenities }
+    #
+    # it "has correct attributes" do
+    #   subject.respond_to?(:address)
+    #   subject.respond_to?(:city)
+    #   subject.respond_to?(:county)
+    #   subject.respond_to?(:state)
+    #   subject.respond_to?(:zip)
+    #   subject.respond_to?(:po_box)
+    # end
+  end
+
+
   # TODO: other fields...
 
 end
