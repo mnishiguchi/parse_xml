@@ -190,11 +190,7 @@ class MitsParser
       find_all("Amenities").first || {}
     end
 
-    def descriptions
-      find_all("Descriptions").first || {}
-    end
-
-    def emails
+    def email
       find_all("Email").first || {}
     end
 

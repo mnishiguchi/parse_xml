@@ -87,14 +87,7 @@ module MitsFormatter
     end
   end
 
-  class Descriptions < MitsFormatter::Base
-    def initialize(data)
-      super(data)
-      @value = data["descriptions"]
-    end
-  end
-
-  class Emails < MitsFormatter::Base
+  class Email < MitsFormatter::Base
     def initialize(data)
       super(data)
       @value = data["emails"]
@@ -195,7 +188,19 @@ module MitsFormatter
   class Utility < MitsFormatter::Base
     def initialize(data)
       super(data)
-      @value = data["utility"].to_json
+
+      # TRANSFORM_KEYS = {
+      #   "AirCon" => "AirConditioning"
+      # }
+
+      # format_at!("TODO",
+      #   ->(k, v) { /AirCon/i =~ k ? [k, "AirConditioning"] : [k, v] },
+      # )
+      # 
+      # format_at!("TODO",
+      #   ->(k, v) { /true|t|1/i =~ v ? [k, "true"] : [k, v] },
+      #   ->(k, v) { /false|f|0/i =~ v ? [k, "false"] : [k, v] },
+      # )
     end
   end
 end

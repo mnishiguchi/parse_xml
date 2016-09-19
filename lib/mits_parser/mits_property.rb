@@ -41,8 +41,7 @@ class MitsProperty
 
     @address      = MitsFormatter::Address.new(@property.address)
     @amenities    = MitsFormatter::Amenities.new(@property.amenities)
-    # @descriptions = MitsFormatter::Descriptions.new(@property.descriptions)
-    # @emails       = MitsFormatter::Emails.new(@property.emails)
+    # @email       = MitsFormatter::Email.new(@property.emails)
     # @feed_uid     = MitsFormatter::FeedUid.new(@property.feed_uid)
     # @floorplans   = MitsFormatter::Floorplans.new(@property.floorplans)
     # @information  = MitsFormatter::Information.new(@property.information)
@@ -57,7 +56,7 @@ class MitsProperty
     # @pet_policy   = MitsFormatter::PetPolicy.new(@property.pet_policy)
     # @promotions   = MitsFormatter::Promotions.new(@property.promotions)
     # @urls         = MitsFormatter::Urls.new(@property.urls)
-    # @utilities    = MitsFormatter::Utilities.new(@property.utilities)
+    @utilities    = MitsFormatter::Utilities.new(@property.utilities)
     freeze
   end
 end
