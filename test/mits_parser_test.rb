@@ -2,18 +2,16 @@ require_relative "../lib/mits_parser/mits_parser.rb"
 
 describe MitsParser do
 
-  before do
-    # The absolute path to the source XML file.
-    path = File.join(FILE_DIR, "boz.xml")
+  let(:ash_property_data) do
+    ash_path = File.join(FILE_DIR, "ash.xml")
+    ash_xml = File.read(ash_path)
+    Hash.from_xml(ash_xml)["PhysicalProperty"]
+  end
 
-    # Read an example xml data.
-    xml = File.read(path)
-
-
-    @property_data = Hash.from_xml(xml)["PhysicalProperty"]
-
-    # ap @property_data["Property"][0]["Information"]["FacebookURL"]
-
+  let(:boz_property_data) do
+    boz_path = File.join(FILE_DIR, "boz.xml")
+    boz_xml = File.read(boz_path)
+    Hash.from_xml(boz_xml)["PhysicalProperty"]
   end
 
 
@@ -26,7 +24,7 @@ describe MitsParser do
     it "Property/Array/Information/FacebookURL" do
       path     = ["Property", "Array", "Information", "FacebookURL"]
       expected = ["http://www.facebook.com/LakesideVA", "http://www.facebook.com/metropointeapts"]
-      assert_equal(expected, MitsParser.find(@property_data, path))
+      assert_equal(expected, MitsParser.find(boz_property_data, path))
     end
 
     describe "data" do
@@ -58,7 +56,7 @@ describe MitsParser do
     describe "path" do
 
       describe "when passed in as non-array type" do
-        subject { MitsParser.find(@property_data, "non-array object") }
+        subject { MitsParser.find(boz_property_data, "non-array object") }
 
         it "raises an exception" do
           assert_raises(Exception)
@@ -66,10 +64,10 @@ describe MitsParser do
       end
 
       describe "when passed in as empty path" do
-        subject { MitsParser.find(@property_data, []) }
+        subject { MitsParser.find(boz_property_data, []) }
 
         it "returns the unprocessed data" do
-          assert_equal(@property_data, subject)
+          assert_equal(boz_property_data, subject)
         end
       end
 
@@ -84,7 +82,7 @@ describe MitsParser do
   describe ".find_all(data, paths)" do
 
     it "returns correct result as a hash" do
-      result_hash = MitsParser.find_all(@property_data,
+      result_hash = MitsParser.find_all(boz_property_data,
       ["Property", "Array", "Information", "FacebookURL"]
       )
       expected = {
@@ -96,7 +94,7 @@ describe MitsParser do
 
   describe ".deep_locate_all_by_key(data, key)" do
     it "returns all the values as an array" do
-      result_array = MitsParser.deep_locate_all_by_key(@property_data, "OpenTime")
+      result_array = MitsParser.deep_locate_all_by_key(boz_property_data, "OpenTime")
       assert result_array.include?({
         "OpenTime"  => "12:00 PM",
         "CloseTime" => "5:00 PM",
@@ -107,13 +105,13 @@ describe MitsParser do
 
   describe ".deep_find_all_by_key(data, key)" do
     # it "returns all the values as an array" do
-    #   result_hash = MitsParser.deep_find_all_by_key(@property_data, "FacebookURL")
+    #   result_hash = MitsParser.deep_find_all_by_key(boz_property_data, "FacebookURL")
     #   expected = ["http://www.facebook.com/LakesideVA", "http://www.facebook.com/metropointeapts"]
     #   assert_equal(expected, result_hash)
     # end
 
     it "returns all the values that were found as an array" do
-      result_hash = MitsParser.deep_find_all_by_key(@property_data, "Address")
+      result_hash = MitsParser.deep_find_all_by_key(boz_property_data, "Address")
       expected = [
         {
           "Address1"=>"6221 Summer Pond Drive",
@@ -140,28 +138,34 @@ describe MitsParser do
   # ===
 
 
-  describe "Property#address" do
+  describe "Property" do
+    let(:properties) { MitsParser.new(ash_property_data).find_all_properties }
 
-    let(:properties) { MitsParser.new(@property_data).find_all_properties }
-    let(:address) { MitsParser::Property.new(properties.first).address }
+    describe "#address" do
 
-    it "returns an array of address info" do
-      assert /city/i  =~ address.to_s
-      assert /state/i =~ address.to_s
+      let(:address) { MitsParser::Property.new(properties.first).address }
+
+      it "returns an info hash" do
+        assert address.is_a?(Hash)
+        assert /city/i  =~ address.to_s
+        assert /state/i =~ address.to_s
+      end
+    end
+
+
+    describe "#amenities" do
+
+      let(:amenities) { MitsParser::Property.new(properties.first).amenities }
+
+      it "returns an info hash" do
+        assert amenities.is_a?(Hash)
+        assert /amenit(y|ies)/i  =~ amenities.to_s
+      end
     end
   end
 
-  describe "Property#amenitiees" do
-    # TODO
 
-    # let(:properties) { MitsParser.new(@property_data).find_all_properties }
-    # let(:address) { MitsParser::Property.new(properties.first).address }
-    #
-    # it "returns an array of address info" do
-    #   assert /city/i  =~ address.to_s
-    #   assert /state/i =~ address.to_s
-    # end
-  end
+  # TODO: other fields...
 
 
 

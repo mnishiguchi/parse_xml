@@ -28,6 +28,23 @@ module MitsFormatter
     def format!(*filters)
       filters.each { |filter| @data = @data.map(&filter) }
       @data = Hash[@data]
+      self
+    end
+
+    def format_at!(key, *filters)
+      data_at_key = @data[key]
+      return self unless data_at_key
+
+      # puts "------Before------"
+      # ap data_at_key
+
+      filters.each { |filter| data_at_key = data_at_key.map(&filter) }
+      @data[key] = Hash[data_at_key]
+
+      # puts "------After------"
+      # ap @data[key]
+
+      self
     end
   end
 
@@ -51,29 +68,22 @@ module MitsFormatter
         ->(k, v) { /county/i =~ k ? ["County", v] : [k, v] },
         ->(k, v) { /zip/i =~ k || /postal/i =~ k ? ["Zip", v] : [k, v] },
       )
-
-      # Determine a value for each key.
-      @address  = @data["Address"]
-      @city     = @data["City"]
-      @county   = @data["County"]
-      @zip      = @data["Zip"]
-      @state    = @data["State"]
-      @country  = @data["Country"]
-      @po_box   = @data["PO_Box"]
     end
   end
 
   class Amenities < MitsFormatter::Base
     def initialize(data)
       super(data)
-      @value = data["menities"].to_json
-    end
-  end
 
-  class Community < MitsFormatter::Base
-    def initialize(data)
-      super(data)
-      @value = data["amenities"]["community"]
+      format_at!("Community",
+        ->(k, v) { /Availab.*24.*/i =~ k ? [k, "AlwaysAvailable"] : [k, v] },
+      )
+
+      format_at!("Floorplan",
+        ->(k, v) { /WD_Hookup/i =~ k ? ["WasherDryerHookup", v] : [k, v] },
+        ->(k, v) { /true|t|1/i =~ v ? [k, "true"] : [k, v] },
+        ->(k, v) { /false|f|0/i =~ v ? [k, "false"] : [k, v] },
+      )
     end
   end
 

@@ -119,6 +119,7 @@ class MitsParser
       data.extend Hashie::Extensions::DeepLocate
       results = data.deep_locate -> (k, v, object) { k == key && v.present? }
       results.uniq!
+      results
     end
 
   end
