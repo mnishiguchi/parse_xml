@@ -8,7 +8,7 @@ A feed parser that is used for parsing a feed xml into mits format.
 It is used in Mits class.
 ---
 Usage:
-  MitsParser.new(@property_data).find_all_properties
+  MitsQuery.new(@property_data).find_all_properties
   #=> array of properties
 ---
 Input:
@@ -22,18 +22,9 @@ Purposes:
   3. Reconstruct as json
 =end
 
-class MitsParser
+class MitsQuery
 
   ARRAY_NODE = "Array"
-
-  def initialize(data)
-    @data = data
-  end
-
-
-  # ===
-  # Utility class methods
-  # ===
 
   class << self
 
@@ -42,9 +33,9 @@ class MitsParser
     # default_value
     # paths - an array of string arrays [["", ""], ["", ""]]
     # returns the value of the first occurrence if any.
-    def find_first(data, *paths)
+    def find_first_by_paths(data, *paths)
       paths.each do |path|
-        result = MitsParser.find(data, path)
+        result = MitsQuery.find_by_path(data, path)
         result = result.compact.flatten if result.is_a?(Array)
         return result unless result.blank?
       end
@@ -55,11 +46,11 @@ class MitsParser
     # data - hash, array or string
     # paths - arrays of strings ["", ""], ["", ""]
     # returns a hash of result
-    def find_all(data, *paths)
+    def find_all_by_paths(data, *paths)
       results = []
 
       paths.each do |path|
-        result = MitsParser.find(data, path)
+        result = MitsQuery.find_by_path(data, path)
         result = result.compact.flatten if result.is_a?(Array)
 
         # Store data as a path-value pair.
@@ -76,7 +67,7 @@ class MitsParser
     # ---
     # NOTE: This method does something similar to what Hash#dig does but
     # the difference is this method proceed recursively even if the data is an array.
-    def find(data, path)
+    def find_by_path(data, path)
       # Ensure args are of proper data types.
       unless data.is_a?(String) || data.is_a?(Array) || data.is_a?(Hash)
         raise ArgumentError.new("data must be an string, array or hash")
@@ -93,10 +84,10 @@ class MitsParser
       # Continue the process.
       if current_node == ARRAY_NODE
         # Recurse on all the nodes in the array.
-        data.map { |d| MitsParser.find(d, remaining_path) }
+        data.map { |d| MitsQuery.find_by_path(d, remaining_path) }
       elsif data.is_a?(Hash) && data[current_node]
         # If data is a hash, recurse on the remaining path.
-        MitsParser.find(data[current_node], remaining_path)
+        MitsQuery.find_by_path(data[current_node], remaining_path)
       else
         data
       end
@@ -122,27 +113,16 @@ class MitsParser
       results
     end
 
-  end
+    # Find all the properties from the passed-in data.
+    def all_properties_from(data)
+      results = []
 
+      ["Property", "property"].each do |key|
+        results << MitsQuery.deep_find_all_by_key(data, key)
+      end
 
-  # ===
-  # ===
-
-
-  # Find all the properties from @data.
-  def find_all_properties
-    results = []
-
-    search_keys = [
-      "Property",
-      "property"
-    ]
-
-    search_keys.each do |key|
-      results << MitsParser.deep_find_all_by_key(@data, key)
+      results = results.flatten.uniq
     end
-
-    results = results.flatten.uniq
   end
 
 
@@ -154,7 +134,7 @@ class MitsParser
   # Finds data for each field.
   # ---
   # Usage:
-  #   MitsParser::Property.new(properties.first).address
+  #   MitsQuery::Property.new(properties.first).address
   class Property
 
     def initialize(property_data)
@@ -162,16 +142,13 @@ class MitsParser
     end
 
 
-    # ===
-    # ===
-
-
-    # returns an address that was found first.
+    # Searches for all the nodes with the specified keys.
+    # Returns all the nodes that were found.
     def find_all(*search_keys)
       results = []
 
       search_keys.each do |key|
-        results << MitsParser.deep_find_all_by_key(@property, key)
+        results << MitsQuery.deep_find_all_by_key(@property, key)
       end
 
       results = results.flatten.uniq

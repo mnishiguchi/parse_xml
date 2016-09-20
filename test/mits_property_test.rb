@@ -1,4 +1,4 @@
-require_relative "../lib/mits_parser/mits_property.rb"
+require_relative "../lib/mits/mits_property.rb"
 
 describe MitsProperty do
 
@@ -6,28 +6,28 @@ describe MitsProperty do
     path = File.join(FILE_DIR, "ash.xml")
     xml  = File.read(path)
 
-    # Create a MitsParser::Property that represents a single property.
+    # Create a MitsQuery::Property that represents a single property.
     data       = Hash.from_xml(xml)["PhysicalProperty"]
-    parser     = MitsParser.new(data)
-    property   = MitsParser::Property.new(parser.find_all_properties.first)
+    properties = MitsQuery::Properties.from(data)
+    property   = MitsQuery::Property.new(properties.first)
   end
 
   let(:boz_mits_parser_property) do
     path = File.join(FILE_DIR, "boz.xml")
     xml  = File.read(path)
 
-    # Create a MitsParser::Property that represents a single property.
+    # Create a MitsQuery::Property that represents a single property.
     data       = Hash.from_xml(xml)["PhysicalProperty"]
-    parser     = MitsParser.new(data)
-    property   = MitsParser::Property.new(parser.find_all_properties.first)
+    properties = MitsQuery::Properties.from(data)
+    property   = MitsQuery::Property.new(properties.first)
   end
 
-  it "is a MitsParser::Property" do
+  it "is a MitsQuery::Property" do
     assert MitsProperty.new(ash_mits_parser_property).is_a?(MitsProperty)
     assert MitsProperty.new(boz_mits_parser_property).is_a?(MitsProperty)
   end
 
-  describe "when MitsParser::Property object is passed in" do
+  describe "when MitsQuery::Property object is passed in" do
     subject { MitsProperty.new({ name: "Example User", email: "user@example.com" }) }
 
     it "raises an exception" do
@@ -52,7 +52,7 @@ describe MitsProperty do
 
     it "has correct data hash" do
 
-      ap amenities.data
+      # ap amenities.data
       assert amenities.data.is_a?(Hash)
       assert amenities.data["Community"].present?
       assert amenities.data["Floorplan"].present?
