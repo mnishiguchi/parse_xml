@@ -141,7 +141,7 @@ describe MitsQuery do
       let(:address) { MitsQuery::Property.new(properties.first).address }
 
       it "returns an info hash" do
-        assert address.is_a?(Hash)
+        assert address.is_a?(Array)
         assert /city/i  =~ address.to_s
         assert /state/i =~ address.to_s
       end
@@ -152,8 +152,8 @@ describe MitsQuery do
 
       let(:amenities) { MitsQuery::Property.new(properties.first).amenities }
 
-      it "returns an info hash" do
-        assert amenities.is_a?(Hash)
+      it "returns an info array" do
+        assert amenities.is_a?(Array)
         assert /amenit(y|ies)/i  =~ amenities.to_s
       end
     end

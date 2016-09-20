@@ -24,7 +24,7 @@ module MitsQueryFinders
     # returns the value of the first occurrence if any.
     def find_first_by_paths(data, *paths)
       paths.each do |path|
-        result = MitsQuery.find_by_path(data, path)
+        result = self.find_by_path(data, path)
         result = result.compact.flatten if result.is_a?(Array)
         return result unless result.blank?
       end
@@ -40,7 +40,7 @@ module MitsQueryFinders
       results = []
 
       paths.each do |path|
-        result = MitsQuery.find_by_path(data, path)
+        result = self.find_by_path(data, path)
         result = result.compact.flatten if result.is_a?(Array)
 
         # Store data as a path-value pair.
@@ -75,10 +75,10 @@ module MitsQueryFinders
       # Continue the process.
       if current_node == ARRAY_NODE
         # Recurse on all the nodes in the array.
-        data.map { |d| MitsQuery.find_by_path(d, remaining_path) }
+        data.map { |d| self.find_by_path(d, remaining_path) }
       elsif data.is_a?(Hash) && data[current_node]
         # If data is a hash, recurse on the remaining path.
-        MitsQuery.find_by_path(data[current_node], remaining_path)
+        self.find_by_path(data[current_node], remaining_path)
       else
         data
       end
@@ -96,8 +96,7 @@ module MitsQueryFinders
     def deep_locate_all_by_key(data, key)
       data.extend Hashie::Extensions::DeepLocate
       results = data.deep_locate -> (k, v, object) { k == key && v.present? }
-      results.uniq!
-      results
+      results = results.uniq
     end
 
 

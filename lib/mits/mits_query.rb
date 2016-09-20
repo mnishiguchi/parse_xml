@@ -58,79 +58,101 @@ module MitsQuery
 
 
     # ===
+    # Finders for individual fields.
+    # ---
+    # - Output: Array of all that were found
     # ===
 
-
     def address
-      find_all_by_keys("Address").first || {}
+      results = find_all_by_keys("Address").compact.uniq
     end
 
     def amenities
-      find_all_by_keys("Amenities").first || {}
+      results = find_all_by_keys("Amenities").compact.uniq
+    end
+
+    def description
+      results = find_all_by_keys("Description", "LongDescription").compact.uniq
     end
 
     def email
-      find_all_by_keys("Email").first || {}
+      results = find_all_by_keys("Email", "Lead2LeaseEmail").compact.uniq
     end
 
     def feed_uid
-      find_all_by_keys("PropertyID").first || {}
+      results = find_all_by_keys("PropertyID", "PrimaryID").compact.uniq
     end
 
     def floorplans
-      find_all_by_keys("Floorplans").first || {}
+      results = find_all_by_keys("Floorplan").compact.uniq
     end
 
     def information
-      find_all_by_keys("Information").first || {}
+      results = find_all_by_keys("Information").compact.uniq
     end
 
     def latitude
-      find_all_by_keys("Latitude").first || {}
+      results = find_all_by_keys("Latitude").compact.uniq
     end
 
     def lease_length
-      find_all_by_keys("LeaseLength").first || {}
+      results = find_all_by_keys("LeaseLength", "LeaseTerm").compact.uniq
     end
 
     def longitude
-      find_all_by_keys("Longitude").first || {}
+      results = find_all_by_keys("Longitude").compact.uniq
     end
 
-    def names
-      find_all_by_keys("Name").first || {}
+    def name
+      results = find_all_by_keys("MarketingName").compact.uniq
     end
 
     def office_hours
-      find_all_by_keys("OfficeHours").first || {}
+      results = find_all_by_keys("OfficeHours", "OfficeHour").compact.uniq
     end
 
     def parking
-      find_all_by_keys("Parking").first || {}
+      results = []
+
+      # Info from Amenities section if any.
+      amenities = find_all_by_keys("Amenities").compact.uniq
+      if amenities.size > 0
+        amenities = amenities.first["General"]
+        amenities.each { |hash| /park/i =~ hash.to_s }
+        results << amenities
+      end
+
+      # Info from Parking section if any.
+      results << find_all_by_keys("Parking").compact.uniq
+
+      # Clean up and return the results.
+      results.compact.flatten
     end
 
     def phones
-      find_all_by_keys("phones").first || {}
+      results = find_all_by_keys("Phone", "PhoneNumber").compact.uniq
     end
 
     def photos
-      find_all_by_keys("photos").first || {}
+      results = find_all_by_keys("File").compact.uniq
     end
 
     def pet_policy
-      find_all_by_keys("pet_policy").first || {}
+      results = find_all_by_keys("Pet").compact.uniq
     end
 
     def promotions
-      find_all_by_keys("promotions").first || {}
+      results = find_all_by_keys("Promotional").compact.uniq
     end
 
-    def urls
-      find_all_by_keys("urls").first || {}
+    def url
+      results = find_all_by_keys("WebSite", "FloorplanAvailabilityURL", "PropertyAvailabilityURL")
+      results.compact.uniq
     end
 
     def utilities
-      find_all_by_keys("utilities").first || {}
+      # TODO: extract from Amenities.
+      results = find_all_by_keys("Utility").compact.uniq
     end
   end
 end
