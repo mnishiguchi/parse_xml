@@ -33,29 +33,29 @@ class MitsParser
       end
 
       # Field that will not be part of the hash.
-      MitsFormatter::Information.format(mits_query.information)
+      MitsFormatter::Information.format!(mits_query.information)
 
       # Return a hash in our desired format.
       # We can cofigure the formats in the MitsFormatter class.
       return {
-        :address      => MitsFormatter::Address.format(mits_query.address),
-        :amenities    => MitsFormatter::Amenities.format(mits_query.amenities),
-        :email        => MitsFormatter::Email.format(mits_query.email),
-        :description  => MitsFormatter::FeedUid.format(mits_query.description),
-        :feed_uid     => MitsFormatter::FeedUid.format(mits_query.feed_uid),
-        :floorplans   => MitsFormatter::Floorplans.format(mits_query.floorplans),
-        :name         => MitsFormatter::Name.format(mits_query.name),
-        :latitude     => MitsFormatter::Latitude.format(mits_query.latitude),
-        :lease_length => MitsFormatter::LeaseLength.format(mits_query.lease_length),
-        :longitude    => MitsFormatter::Longitude.format(mits_query.longitude),
-        :office_hours => MitsFormatter::OfficeHours.format(mits_query.office_hours),
-        :parking      => MitsFormatter::Parking.format(mits_query.parking),
-        :phones       => MitsFormatter::Phones.format(mits_query.phones),
-        :photos       => MitsFormatter::Photos.format(mits_query.photos),
-        :pet_policy   => MitsFormatter::PetPolicy.format(mits_query.pet_policy),
-        :promotions   => MitsFormatter::Promotions.format(mits_query.promotions),
-        :url          => MitsFormatter::Url.format(mits_query.url),
-        :utilities    => MitsFormatter::Utilities.format(mits_query.utilities)
+        :address      => MitsFormatter::Address.format!(mits_query.address),
+        :amenities    => MitsFormatter::Amenities.format!(mits_query.amenities),
+        :email        => MitsFormatter::Email.format!(mits_query.email),
+        :description  => MitsFormatter::FeedUid.format!(mits_query.description),
+        :feed_uid     => MitsFormatter::FeedUid.format!(mits_query.feed_uid),
+        :floorplans   => MitsFormatter::Floorplans.format!(mits_query.floorplans),
+        :name         => MitsFormatter::Name.format!(mits_query.name),
+        :latitude     => MitsFormatter::Latitude.format!(mits_query.latitude),
+        :lease_length => MitsFormatter::LeaseLength.format!(mits_query.lease_length),
+        :longitude    => MitsFormatter::Longitude.format!(mits_query.longitude),
+        :office_hours => MitsFormatter::OfficeHours.format!(mits_query.office_hours),
+        :parking      => MitsFormatter::Parking.format!(mits_query.parking),
+        :phones       => MitsFormatter::Phones.format!(mits_query.phones),
+        :photos       => MitsFormatter::Photos.format!(mits_query.photos),
+        :pet_policy   => MitsFormatter::PetPolicy.format!(mits_query.pet_policy),
+        :promotions   => MitsFormatter::Promotions.format!(mits_query.promotions),
+        :url          => MitsFormatter::Url.format!(mits_query.url),
+        :utilities    => MitsFormatter::Utilities.format!(mits_query.utilities)
       }
     end
 end

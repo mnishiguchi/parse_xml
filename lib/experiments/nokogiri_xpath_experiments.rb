@@ -1,22 +1,31 @@
 require 'nokogiri'
 require "awesome_print"
 
-# Check currently working directory.
-puts "Dir.pwd:  #{Dir.pwd}"
+# Read an xml file from the specified path and returns the parsed xml document.
+def load_xml(file_path)
+  # Read the source XML file.
+  puts "file_path: #{file_path}"
+  raw_xml = File.read(file_path)
 
-# absolute path to the source XML file.
-filename = "#{Dir.pwd}/test/fixtures/files/ash_a.xml"
-puts "filename: #{filename}"
+  # Parse raw_xml using Nokogiri.
+  xml_document = Nokogiri.XML(raw_xml)
+end
 
-# Read that file.
-xml = File.read(filename)
-
-# Parse xml using Nokogiri.
-doc = Nokogiri.XML(xml)
-
-# Get XPATHs.
+# Obtains XPATHs.
 # http://stackoverflow.com/a/15692699/3837223
-xpaths = []
-doc.xpath('//*[child::* and not(child::*/*)]').each { |node| xpaths << node.path }
+def uniq_xpaths(xml_document)
+  xpaths = []
+  xml_document.xpath('//*[child::* and not(child::*/*)]').each { |node| xpaths << node.path }
+  xpaths.each { |path| path.gsub!(/\[\d*\]/, "[]") }.uniq!
+end
 
-ap xpaths
+
+# ---
+# ---
+
+
+file_path    = "#{Dir.pwd}/test/fixtures/files/boz.xml"
+xml_document = load_xml(file_path)
+
+
+ap uniq_xpaths(xml_document)

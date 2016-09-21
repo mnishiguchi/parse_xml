@@ -16,7 +16,7 @@ module MitsFormatter
 
     # Public API. Takes in an array of data for a given field.
     # Returns a processed data as value.
-    def self.format(data)
+    def self.format!(data)
       new(data).value
     end
 
