@@ -6,12 +6,12 @@ require "hashie"
 require_relative "mits_query_finders.rb"
 
 =begin
-A feed parser that is used for parsing a feed xml into mits format.
-It is used in Mits class.
+The MitsQuery module helps us extract from parsed feed information that we want.
 ---
 Usage:
-  properties = MitsQuery.all_properties_from(data)
-  #=> array of properties
+  # Create a MitsQuery representation of all the properties.
+  @mits_query = MitsQuery::Properties.from(mits_data)
+
   NOTE: Data must not include the root key, namely "PhysicalProperty".
 =end
 
@@ -19,6 +19,9 @@ module MitsQuery
   include MitsQueryFinders
 
   class Properties
+
+    # Retuens an array of MitsQuery::Property objects, which is generated
+    # based on the passed-in feed data.
     def self.from(data)
       results = []
 
@@ -27,18 +30,19 @@ module MitsQuery
       end
 
       results = results.flatten.uniq
+      results = results.map { |property| MitsQuery::Property.new(property) }
     end
   end
 
 
-  # ===
-  # ===
+  # ---
+  # ---
 
 
   # Represents a single property. Finds data for each field of our property schema.
   # ---
   # Usage:
-  #   MitsQuery::Property.new(a_property).address
+  #   MitsQuery::Property.new(property).address
   class Property
 
     def initialize(property_data)
@@ -52,16 +56,15 @@ module MitsQuery
       search_keys.each do |key|
         results << MitsQuery.deep_find_all_by_key(@property, key)
       end
-
-      results = results.flatten.uniq
+      
+      results = results.flatten.uniq.compact
     end
 
 
-    # ===
-    # Finders for individual fields.
     # ---
-    # - Output: Array of all that were found
-    # ===
+    # Finders for individual fields.
+    # NOTE: Must return an array of all data that were found.
+    # ---
 
     def address
       results = find_all_by_keys("Address").compact.uniq

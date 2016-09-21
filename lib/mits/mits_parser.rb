@@ -1,10 +1,11 @@
-require_relative "./mits_field.rb"
+require_relative "./mits_formatter.rb"
 
 =begin
-MitsParser is an organizer of the process of parsing Mits feed into our Mits schema.
-
+A MitsParser object restructures a given piece of mits data into our
+predetermined schema with assistance of the classes MitsQuery and  MitsFormatter.
+---
 Usage:
-  parser = MitsParser.new(mits_data).parse
+  formatted_mits = MitsParser.new(mits_data).parse
   #==> Formatted array of hashes.
 =end
 
@@ -15,45 +16,46 @@ class MitsParser
       raise "data must be array or hash"
     end
 
-    # MitsQuery representation of the properties.
-    @properties = MitsQuery::Properties.from(mits_data).map do |property|
-      MitsQuery::Property.new(property)
-    end
+    # Create a MitsQuery representation of all the properties.
+    @mits_query = MitsQuery::Properties.from(mits_data)
   end
 
   def parse
-    @parsed ||= @properties.map { |property| format_property!(property) }
+    @parsed ||= @mits_query.map { |property| format_property!(property) }
   end
 
-  # property_data - a MitsQuery::Property object that represents a SINGLE property.
-  def format_property!(property_data)
-    unless property_data.is_a?(MitsQuery::Property)
-      raise ArgumentError.new("property_data must be a MitsQuery::Property")
+  private
+
+    # Takes a MitsQuery::Property object that represents a SINGLE property.
+    def format_property!(mits_query)
+      unless mits_query.is_a?(MitsQuery::Property)
+        raise ArgumentError.new("mits_query must be a MitsQuery::Property")
+      end
+
+      # Field that will not be part of the hash.
+      MitsFormatter::Information.format(mits_query.information)
+
+      # Return a hash in our desired format.
+      # We can cofigure the formats in the MitsFormatter class.
+      return {
+        :address      => MitsFormatter::Address.format(mits_query.address),
+        :amenities    => MitsFormatter::Amenities.format(mits_query.amenities),
+        :email        => MitsFormatter::Email.format(mits_query.email),
+        :description  => MitsFormatter::FeedUid.format(mits_query.description),
+        :feed_uid     => MitsFormatter::FeedUid.format(mits_query.feed_uid),
+        :floorplans   => MitsFormatter::Floorplans.format(mits_query.floorplans),
+        :name         => MitsFormatter::Name.format(mits_query.name),
+        :latitude     => MitsFormatter::Latitude.format(mits_query.latitude),
+        :lease_length => MitsFormatter::LeaseLength.format(mits_query.lease_length),
+        :longitude    => MitsFormatter::Longitude.format(mits_query.longitude),
+        :office_hours => MitsFormatter::OfficeHours.format(mits_query.office_hours),
+        :parking      => MitsFormatter::Parking.format(mits_query.parking),
+        :phones       => MitsFormatter::Phones.format(mits_query.phones),
+        :photos       => MitsFormatter::Photos.format(mits_query.photos),
+        :pet_policy   => MitsFormatter::PetPolicy.format(mits_query.pet_policy),
+        :promotions   => MitsFormatter::Promotions.format(mits_query.promotions),
+        :url          => MitsFormatter::Url.format(mits_query.url),
+        :utilities    => MitsFormatter::Utilities.format(mits_query.utilities)
+      }
     end
-
-    # Field that will not be part of the hash.
-    MitsField::Information.from(property_data.information)
-
-    # Return a hash in our desired format.
-    return {
-      :address      => MitsField::Address.from(property_data.address),
-      :amenities    => MitsField::Amenities.from(property_data.amenities),
-      :email        => MitsField::Email.from(property_data.email),
-      :description  => MitsField::FeedUid.from(property_data.description),
-      :feed_uid     => MitsField::FeedUid.from(property_data.feed_uid),
-      :floorplans   => MitsField::Floorplans.from(property_data.floorplans),
-      :name         => MitsField::Name.from(property_data.name),
-      :latitude     => MitsField::Latitude.from(property_data.latitude),
-      :lease_length => MitsField::LeaseLength.from(property_data.lease_length),
-      :longitude    => MitsField::Longitude.from(property_data.longitude),
-      :office_hours => MitsField::OfficeHours.from(property_data.office_hours),
-      :parking      => MitsField::Parking.from(property_data.parking),
-      :phones       => MitsField::Phones.from(property_data.phones),
-      :photos       => MitsField::Photos.from(property_data.photos),
-      :pet_policy   => MitsField::PetPolicy.from(property_data.pet_policy),
-      :promotions   => MitsField::Promotions.from(property_data.promotions),
-      :url          => MitsField::Url.from(property_data.url),
-      :utilities    => MitsField::Utilities.from(property_data.utilities)
-    }
-  end
 end

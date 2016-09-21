@@ -1,21 +1,22 @@
 =begin
-The MitsField class provides us with a single location to
+The MitsFormatter class provides us with a single location to
 configure each fields of the Properties table. Its initializer
 takes a feed data. We create subclasses of the Base class that
 correspond to the Property model's column names and specify how
 to determine the value for each field.
+---
 Usage:
-  address = MitsField::Address.new(data)
+  address = MitsFormatter::Address.format(data)
 =end
 
-module MitsField
+module MitsFormatter
 
   class Base
     attr_reader :value
 
     # Public API. Takes in an array of data for a given field.
     # Returns a processed data as value.
-    def self.from(data)
+    def self.format(data)
       new(data).value
     end
 
@@ -23,23 +24,23 @@ module MitsField
 
       def initialize(data)
         raise "data must be array" unless data.is_a?(Array) # || data.is_a?(Hash)
-        @value = data
+        @value = data  # The value is equal to data by default.
       end
 
       # Applies to @value the specified filters to format the data.
       # filters - an array of filter lambdas.
       # Usage:
-      #   format_root!(
+      #   filter_root!(
       #     ->(k, v) { /n\/a/i =~ v ? [k, ""] : [k, v] },
       #     ->(k, v) { /address/i =~ k ? ["Address", v] : [k, v] },
       #   )
-      def format_root!(filters)
+      def filter_root!(filters)
         return unless @value.is_a? Hash
         filters.each { |filter| @value = @value.map(&filter) }
         @value = Hash[@value]
       end
 
-      def format_children!(key, filters)
+      def filter_child!(key, filters)
         return unless @value.is_a? Hash
 
         data_at_key = @value[key]
@@ -75,7 +76,7 @@ module MitsField
   # ===
 
 
-  class Address < MitsField::Base
+  class Address < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -86,7 +87,7 @@ module MitsField
       # Standardizes on the "Address" key for the street address.
       # Standardizes on the "County" key for the county.
       # Standardizes on the "Zip" key for the zipcode.
-      format_root! [
+      filter_root! [
         replace_key(/address/i, "Address"),
         replace_key(/county/i, "County"),
         replace_key(/zip|postal/i, "Zip"),
@@ -95,18 +96,18 @@ module MitsField
     end
   end
 
-  class Amenities < MitsField::Base
+  class Amenities < MitsFormatter::Base
     def initialize(data)
       super(data)
 
       # Extract a value  we want from the data.
       @value = data.first
 
-      format_children! "Community", [
+      filter_child! "Community", [
         replace_key(/Availab.*24.*/i, "AlwaysAvailable")
       ]
 
-      format_children! "Floorplan", [
+      filter_child! "Floorplan", [
         replace_key(/WD_Hookup/i, "WasherDryerHookup"),
         replace_value(/true|t|1/i, "true"),
         replace_value(/false|f|0/i, "false")
@@ -114,7 +115,7 @@ module MitsField
     end
   end
 
-  class Description < MitsField::Base
+  class Description < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -123,7 +124,7 @@ module MitsField
     end
   end
 
-  class Email < MitsField::Base
+  class Email < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -132,7 +133,7 @@ module MitsField
     end
   end
 
-  class FeedUid < MitsField::Base
+  class FeedUid < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -141,7 +142,7 @@ module MitsField
     end
   end
 
-  class Floorplans < MitsField::Base
+  class Floorplans < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -150,7 +151,7 @@ module MitsField
     end
   end
 
-  class Information < MitsField::Base
+  class Information < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -159,7 +160,7 @@ module MitsField
     end
   end
 
-  class Latitude < MitsField::Base
+  class Latitude < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -168,7 +169,7 @@ module MitsField
     end
   end
 
-  class LeaseLength < MitsField::Base
+  class LeaseLength < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -182,7 +183,7 @@ module MitsField
     end
   end
 
-  class Longitude < MitsField::Base
+  class Longitude < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -191,7 +192,7 @@ module MitsField
     end
   end
 
-  class Name < MitsField::Base
+  class Name < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -200,7 +201,7 @@ module MitsField
     end
   end
 
-  class OfficeHours < MitsField::Base
+  class OfficeHours < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -217,7 +218,7 @@ module MitsField
     end
   end
 
-  class Parking < MitsField::Base
+  class Parking < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -226,7 +227,7 @@ module MitsField
     end
   end
 
-  class PetPolicy < MitsField::Base
+  class PetPolicy < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -235,7 +236,7 @@ module MitsField
     end
   end
 
-  class Phones < MitsField::Base
+  class Phones < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -245,7 +246,7 @@ module MitsField
     end
   end
 
-  class Photos < MitsField::Base
+  class Photos < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -254,7 +255,7 @@ module MitsField
     end
   end
 
-  class Promotions < MitsField::Base
+  class Promotions < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -263,7 +264,7 @@ module MitsField
     end
   end
 
-  class Url < MitsField::Base
+  class Url < MitsFormatter::Base
     def initialize(data)
       super(data)
 
@@ -272,7 +273,7 @@ module MitsField
     end
   end
 
-  class Utilities < MitsField::Base
+  class Utilities < MitsFormatter::Base
     def initialize(data)
       super(data)
 

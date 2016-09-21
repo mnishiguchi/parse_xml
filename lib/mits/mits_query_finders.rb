@@ -1,8 +1,8 @@
 require_relative "mits_query.rb"
 
 =begin
-The MitsQueryFinders module provides a set of utility methods for us to used
-for searching in a piece of property data.
+The MitsQueryFinders module provides a set of utility methods for us to use
+for searching for a piece of property data at a given key or path.
 =end
 
 module MitsQueryFinders

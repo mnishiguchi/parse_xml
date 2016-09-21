@@ -136,27 +136,27 @@ describe MitsQuery do
   describe "Property" do
     let(:properties) { MitsQuery::Properties.from(ash_property_data) }
 
-    describe "#address" do
-
-      let(:address) { MitsQuery::Property.new(properties.first).address }
-
-      it "returns an info hash" do
-        assert address.is_a?(Array)
-        assert /city/i  =~ address.to_s
-        assert /state/i =~ address.to_s
-      end
-    end
-
-
-    describe "#amenities" do
-
-      let(:amenities) { MitsQuery::Property.new(properties.first).amenities }
-
-      it "returns an info array" do
-        assert amenities.is_a?(Array)
-        assert /amenit(y|ies)/i  =~ amenities.to_s
-      end
-    end
+    # describe "#address" do
+    #
+    #   let(:address) { MitsQuery::Property.new(properties.first).address }
+    #
+    #   it "returns an info hash" do
+    #     assert address.is_a?(Array)
+    #     assert /city/i  =~ address.to_s
+    #     assert /state/i =~ address.to_s
+    #   end
+    # end
+    #
+    #
+    # describe "#amenities" do
+    #
+    #   let(:amenities) { MitsQuery::Property.new(properties.first).amenities }
+    #
+    #   it "returns an info array" do
+    #     assert amenities.is_a?(Array)
+    #     assert /amenit(y|ies)/i  =~ amenities.to_s
+    #   end
+    # end
   end
 
 
