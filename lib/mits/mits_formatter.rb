@@ -17,13 +17,13 @@ module MitsFormatter
     # Public API. Takes in an array of data for a given field.
     # Returns a processed data as value.
     def self.format!(data)
-      new(data).value
+      new(data).value || {}
     end
 
     protected
 
       def initialize(data)
-        raise "data must be array" unless data.is_a?(Array) # || data.is_a?(Hash)
+        raise "data must be array" unless data.is_a?(Array)
         @value = data  # The value is equal to data by default.
       end
 
@@ -80,7 +80,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data.first
 
       # Replaces "N/A" with "".
@@ -100,7 +100,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data.first
 
       filter_child! "Community", [
@@ -119,7 +119,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data.first
     end
   end
@@ -128,7 +128,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data.first
     end
   end
@@ -137,7 +137,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data.first
     end
   end
@@ -146,7 +146,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data
     end
   end
@@ -155,7 +155,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data.first
     end
   end
@@ -164,7 +164,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data.first
     end
   end
@@ -173,12 +173,23 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       lease_length = data.first
       if lease_length.is_a?(String)
-        @value = { min: lease_length, max: nil }
+        @value = {
+          min: lease_length,
+          max: nil
+        }
       elsif lease_length.is_a?(Hash) && lease_length["Min"]
-        @value = { min: lease_length["Min"], max: lease_length["Max"] }
+        @value = {
+          min: lease_length["Min"],
+          max: lease_length["Max"]
+        }
+      else
+        @value = {
+          min: nil,
+          max: nil
+        }
       end
     end
   end
@@ -187,7 +198,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data.first
     end
   end
@@ -196,7 +207,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data.first
     end
   end
@@ -205,7 +216,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       json = data.to_json
       json.gsub!(/sunday/i, "Sunday")
       json.gsub!(/monday/i, "Monday")
@@ -222,7 +233,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data
     end
   end
@@ -231,7 +242,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data
     end
   end
@@ -241,8 +252,8 @@ module MitsFormatter
       super(data)
 
       # Extract phone number from data.
+      phone_regex = /\A(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\z/
       @value = data.first
-      @value = data.to_s.scan(/\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})/).join("-")
     end
   end
 
@@ -250,8 +261,9 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
-      @value = data
+      # Our format: an array of URL strings.
+      url_regex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/
+      @value = data.map { |el| el.to_s.scan(url_regex) }.flatten
     end
   end
 
@@ -259,7 +271,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data
     end
   end
@@ -268,7 +280,7 @@ module MitsFormatter
     def initialize(data)
       super(data)
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data.first
     end
   end
@@ -279,7 +291,7 @@ module MitsFormatter
 
       # TODO: What data comes here?
 
-      # Extract a value  we want from the data.
+      # Extract a value we want from the data.
       @value = data
     end
   end

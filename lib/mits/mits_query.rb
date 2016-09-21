@@ -43,6 +43,7 @@ module MitsQuery
   # ---
   # Usage:
   #   MitsQuery::Property.new(property).address
+
   class Property
 
     def initialize(property_data)
@@ -56,7 +57,7 @@ module MitsQuery
       search_keys.each do |key|
         results << MitsQuery.deep_find_all_by_key(@property, key)
       end
-      
+
       results = results.flatten.uniq.compact
     end
 
@@ -65,6 +66,7 @@ module MitsQuery
     # Finders for individual fields.
     # NOTE: Must return an array of all data that were found.
     # ---
+
 
     def address
       results = find_all_by_keys("Address").compact.uniq
@@ -133,11 +135,11 @@ module MitsQuery
     end
 
     def phones
-      results = find_all_by_keys("Phone", "PhoneNumber").compact.uniq
+      results = find_all_by_keys("PhoneNumber", "Phone").compact.uniq
     end
 
     def photos
-      results = find_all_by_keys("File").compact.uniq
+      results = find_all_by_keys("File", "SlideshowImageURL").compact.uniq
     end
 
     def pet_policy
