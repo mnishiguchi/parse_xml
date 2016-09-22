@@ -35,7 +35,7 @@ class MitsParser
         raise ArgumentError.new("mits_query must be a MitsQuery::Property")
       end
 
-      # Format things.
+      # Step 1: Format things
       address      = MitsFormatter::Address.format!(mits_query.address)
       amenities    = MitsFormatter::Amenities.format!(mits_query.amenities)
       email        = MitsFormatter::Email.format!(mits_query.email)
@@ -49,7 +49,7 @@ class MitsParser
       longitude    = MitsFormatter::Longitude.format!(mits_query.longitude)
       office_hours = MitsFormatter::OfficeHours.format!(mits_query.office_hours)
       parking      = MitsFormatter::Parking.format!(mits_query.parking)
-      phones       = MitsFormatter::Phones.format!(mits_query.phones)
+      phone        = MitsFormatter::Phone.format!(mits_query.phone)
       photos       = MitsFormatter::Photos.format!(mits_query.photos)
       pet_policy   = MitsFormatter::PetPolicy.format!(mits_query.pet_policy)
       promotions   = MitsFormatter::Promotions.format!(mits_query.promotions)
@@ -57,77 +57,77 @@ class MitsParser
       utilities    = MitsFormatter::Utilities.format!(mits_query.utilities)
 
 
-      # Return a hash in our desired format.
-      # We can cofigure the formats in the MitsFormatter class.
+      # Step 2: Create a hash in our desired format.
       {
         :raw_hash     => @data,
 
-        :floorplans   => floorplans,
+        ## Has One to Has One
+        # Feed Attributes
+        :name         => name,
+        :email        => email,
+        :url          => url,
+        :phone        => phone,
+        :description  => description,
 
-        # Address fields
+        # :floorplans   => floorplans,
+
+        :latitude     => latitude,
+        :longitude    => longitude,
         :address      => address["Address"],
         :city         => address["City"],
+        :po_box       => address["PO_Box"],
         :county       => address["County"],
         :state        => address["State"],
         :zip          => address["Zip"],
-        :po_box       => address["PO_Box"],
         :country      => address["Country"],
 
-        # Lease length
-        :lease_length_min => lease_length[:min],
-        :lease_length_max => lease_length[:max],
+        :lease_length_min => lease_length["Min"],
+        :lease_length_max => lease_length["Max"],
 
-
+        ## Has Many to Has Many
+        # Selectively Ignored Attributes
         :amenities    => amenities,
-        :email        => email,
-        :description  => description,
-        :feed_uid     => feed_uid,
-        :name         => name,
-        :latitude     => latitude,
-        :longitude    => longitude,
-        :office_hours => office_hours,
-        :parking      => parking,
-        :phones       => phones,
         :photos       => photos,
-        :pet_policy   => pet_policy,
-        :promotions   => promotions,
-        :url          => url,
         :utilities    => utilities,
       }
     end
 end
 
 =begin
-----------------------------
-# All the top level keys
-----------------------------
-[
-    [ 0] :raw_hash,
-    [ 1] :floorplans,
-    [ 2] :unique_feed_identifiers,
-    [ 3] :longitude,
-    [ 4] :latitude,
-    [ 5] :names,
-    [ 6] :urls,
-    [ 7] :emails,
-    [ 8] :phones,
-    [ 9] :descriptions,
-    [10] :information,
-    [11] :office_hours,
-    [12] :photo_urls,
-    [13] :pet_policy,
-    [14] :promotional_info,
-    [15] :amenities,
-    [16] :utilities,
-    [17] :parking,
-    [18] :address,
-    [19] :city,
-    [20] :county,
-    [21] :zip,
-    [22] :po_box,
-    [23] :country,
-    [24] :state,
-    [25] :lease_length_min,
-    [26] :lease_length_max
-]
+class FeedProperty < ApplicationRecord
+
+  ...
+
+  def property_attributes
+    {
+      ## Has Many to Has One
+      # Mapped Attributes
+      name:        name,
+      email:       email,
+      url:         url,
+      phone:       phone,
+      description: description,
+
+      ## Has One to Has One
+      # Feed Attributes
+      longitude:        longitude,
+      latitude:         latitude,
+      address:          address,
+      city:             city,
+      po_box:           po_box,
+      county:           county,
+      zip:              zip,
+      state:            state,
+      country:          country,
+      lease_length_min: lease_length_min,
+      lease_length_max: lease_length_max,
+
+      ## Has Many to Has Many
+      # Selectively Ignored Attributes
+      photo_urls:     photos_for_merge,
+      amenities:   amenities_for_merge,
+      utilities:   utilities_for_merge
+    }.select { |key, value| [:id].exclude?(key) && [nil].exclude?(value) }
+  end
+
 =end

@@ -3,7 +3,7 @@ require "awesome_print"
 require "json"
 require "hashie"
 
-require_relative "mits_query_finders.rb"
+# require_relative "mits_query_finders.rb"
 
 =begin
 The MitsQuery module helps us extract from parsed feed information that we want.
@@ -16,7 +16,32 @@ Usage:
 =end
 
 module MitsQuery
-  include MitsQueryFinders
+
+  class << self
+    # Returns array of values.
+    def deep_find_all_by_key(data, key)
+      data.extend Hashie::Extensions::DeepFind
+      data.deep_find_all(key)
+    end
+
+    # Returns array of key-value pairs(hashes).
+    def deep_locate_all_by_key(data, key)
+      data.extend Hashie::Extensions::DeepLocate
+      results = data.deep_locate -> (k, v, object) { k == key && v.present? }
+      results = results.uniq
+    end
+
+    def all_variants(string)
+      [string.singularize, string.pluralize].map do |s|
+        [s.titleize, s.camelize, s.underscore, s.tableize, s.humanize]
+      end.flatten.uniq
+    end
+  end
+
+
+  # ---
+  # ---
+  
 
   class Properties
 
@@ -134,7 +159,7 @@ module MitsQuery
       results.compact.flatten
     end
 
-    def phones
+    def phone
       results = find_all_by_keys("PhoneNumber", "Phone").compact.uniq
     end
 
