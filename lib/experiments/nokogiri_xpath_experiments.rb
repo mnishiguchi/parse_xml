@@ -1,5 +1,6 @@
-require 'nokogiri'
 require "awesome_print"
+require 'nokogiri'
+
 
 # Read an xml file from the specified path and returns the parsed xml document.
 def load_xml(file_path)
@@ -11,6 +12,7 @@ def load_xml(file_path)
   xml_document = Nokogiri.XML(raw_xml)
 end
 
+
 # Obtains XPATHs.
 # http://stackoverflow.com/a/15692699/3837223
 def uniq_xpaths(xml_document)
@@ -21,11 +23,30 @@ end
 
 
 # ---
+# Read a single XML file
 # ---
 
 
-file_path    = "#{Dir.pwd}/test/fixtures/files/boz.xml"
+file_path    = "#{Dir.pwd}/test/fixtures/files/feed_f.xml"
 xml_document = load_xml(file_path)
+# ap uniq_xpaths(xml_document)
+
+ap xml_document.at_xpath("/PhysicalProperty/Property/Floorplan")
+ap xml_document.at_xpath("/PhysicalProperty/Property/File")
 
 
-ap uniq_xpaths(xml_document)
+# ---
+# Read XML files
+# ---
+
+
+# pattern   = File.join(Dir.pwd, "test", "fixtures", "files", "feed_*.xml")
+# filenames = Dir.glob(pattern)
+# filenames
+#
+# xpaths = []
+#
+# filenames.each do |file|
+#   xml_document = load_xml(file)
+#   xpaths << uniq_xpaths(xml_document)
+# end
