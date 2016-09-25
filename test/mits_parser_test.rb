@@ -1,4 +1,9 @@
-require_relative "../lib/mits/mits_parser.rb"
+require_relative "../lib/mits_parser/mits_parser.rb"
+require_relative "test_helper.rb"
+
+=begin
+How to run this test: bundle exec guard
+=end
 
 describe MitsParser do
 

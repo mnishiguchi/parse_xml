@@ -89,6 +89,7 @@ DEPENDENCIES
   guard
   guard-minitest
   hashie
+  minitest
   minitest-power_assert
   minitest-reporters
   nokogiri
